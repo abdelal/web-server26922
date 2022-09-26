@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<!-- CSS only -->
+<script src="/app.js"></script>
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <script>
+        let donors = 0
+        let total = 0
+
+        function send_donation() {
+
+            donation_amount = document.getElementById("amount").value
+
+            if (Number(donation_amount) <= 0) {
+                console.log("donation must be more than zero")
+                return
+            }
+
+            const url = 'http://localhost:8000/donations';
+            fetch(url, {
+                method: "POST",
+                body: JSON.stringify({
+                    amount: donation_amount,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(
+                html => {
+                    donors += 1
+                    total += Number(donation_amount)
+                    document.getElementById('total_donations').innerHTML = total
+                    document.getElementById('total_donors').innerHTML = donors
+                }
+
+            ).catch(err => {
+                console.log("request was not successful")
+                donors -= 1
+                document.getElementById('total_donors').innerHTML = donors
+            })
+        }
+
+        function get_summery() {
+            const url = 'http://localhost:8000/summery';
+            fetch(url, {
+                method: "GET",
+            }).then(
+                response => response.json()
+            ).then(
+                summery => {
+                    summery => summery.json()
+                    total = summery['total']
+                    donors = summery['donors']
+                    document.getElementById('total_donors').innerHTML = summery['donors'];
+                    document.getElementById('total_donations').innerHTML = summery['total'];
+                }
+            );
+        }
+        get_summery()
+    </script>
+
+</head>
+
+<body>
+
+    <center>
+        <div id="donationProgress">
+            <div id="bar"></div>
+        </div>
+
+
+        <b>donation:</b>
+        <input id="amount" type="number" placeholder="donation amount" />
+        <input type="submit" class="btn btn-primary" value="Submit" onclick="send_donation()">
+        <p>donate to join our cause</p>
+
+        <div class="block">
+            <label>donors : </label>
+            <span id="total_donors"></span>
+        </div>
+        <div class="block">
+            <label>donations :</label>
+            <span id="total_donations"></span>
+        </div>
+
+    </center>
+
+</body>
+
+</html>
