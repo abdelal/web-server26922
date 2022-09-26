@@ -2,6 +2,9 @@
 
 to run
 
+
+cd to the server directory
+
 # Linux
 sh start.sh
 
